@@ -1,3 +1,5 @@
+package yukicoder
+
 fun main() {
     val N: Int = readLine()!!.toInt()
     var V: IntArray = readLine()!!.split(" ").map(String::toInt).toIntArray()

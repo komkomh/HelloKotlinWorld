@@ -1,3 +1,5 @@
+package yukicoder
+
 fun main() {
     val N: Int = readLine()!!.toInt()
     var count: Int = 0

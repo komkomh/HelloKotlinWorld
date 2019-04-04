@@ -1,3 +1,5 @@
+package yukicoder
+
 fun main() {
     val N: Int = readLine()!!.toInt()
     val V: List<Int> = readLine()!!.split(" ").map(String::toInt)
