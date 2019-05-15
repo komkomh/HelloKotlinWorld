@@ -19,73 +19,55 @@ fun main() {
         return
     }
 
-    fun isCopyAble(boolArray: BooleanArray): Boolean {
-        var reds = mutableListOf<Pair<Int, Int>>()
-        var blues = mutableListOf<Pair<Int, Int>>()
-        boolArray.forEachIndexed { index, b ->
-            if (b) reds.add(blacks[index])
-            else blues.add(blacks[index])
-        }
+    fun canCopy(redIndexes: IntArray, blueIndexes: List<Int>): Boolean {
+        val firstRed = blacks[redIndexes[0]]
+        val firstBlue = blacks[blueIndexes[0]]
+        val diffH = firstRed.first - firstBlue.first
+        val diffW = firstRed.second - firstBlue.second
 
-        val xx = mutableListOf(
-            Pair(0, 0),
-            Pair(0, 1),
-            Pair(0, 2),
-            Pair(1, 0),
-            Pair(1, 2),
-            Pair(1, 4),
-            Pair(2, 0),
-            Pair(2, 1),
-            Pair(2, 2)
-        )
-        if (reds == xx) {
-            println("kiteru!")
-        }
-
-        println("${reds}|${blues}")
-        val diffH = reds[0].first - blues[0].first
-        val diffW = reds[0].second - blues[0].second
-        for (i in 0 until blacks.size / 2) {
-            if (reds[i].first - blues[i].first != diffH) {
-                return false
-            }
-            if (reds[i].second - blues[i].second != diffW) {
+        for (i in 1 until blueIndexes.size) {
+            val red = blacks[redIndexes[i]]
+            val blue = blacks[blueIndexes[i]]
+            if (red.first - blue.first != diffH || red.second - blue.second != diffW) {
                 return false
             }
         }
         return true
     }
 
-    val redSize = blacks.size / 2
-    val start = Date().time
-
-    var boolArray: BooleanArray = BooleanArray(blacks.size)
-    (0 until redSize).forEach { boolArray[it] = true }
-
-    while (true) {
-        for (i in 0 until blacks.size - 1) {
-            if (boolArray[i] && !boolArray[i + 1]) {
-                boolArray[i + 1] = true
-                boolArray[i] = false
-                if (isCopyAble(boolArray)) {
-                    println("YES")
-                    return
-                }
+    fun searchCopyPoint(vararg redIndexes: Int): Boolean {
+//        redIndexes.forEach { print("${it},") }
+//        println()
+        val blueIndexes = (0 until redIndexes.size).filter { !redIndexes.contains(it) }
+        if (blueIndexes.size > 1) {
+            if (!canCopy(redIndexes, blueIndexes)) {
+                blueIndexes.forEach { print("${it},") }
+                print("| ${redIndexes.last()}")
+                println()
+                return false
             }
         }
 
-        if (boolArray.indexOfFirst { it } >= redSize) {
-            boolArray.forEach { print("${it},") }
-            println()
-            break
+        return when (redIndexes.size == blacks.size / 2) {
+            true -> true
+            false -> {
+                val last = if (redIndexes.isEmpty()) 0 else redIndexes.last()
+                ((last + 1) until blacks.size).map { searchCopyPoint(*redIndexes, it) }.any { it }
+            }
         }
     }
-    val end = Date().time
-    println(end - start)
-    println("NO")
 
-//    when (canPaint()) {
-//        true -> println("YES")
-//        false -> println("NO")
-//    }
+    val start = Date().time
+    when (searchCopyPoint()) {
+        true -> {
+            val end = Date().time
+            println(end - start)
+            println("YES")
+        }
+        false -> {
+            val end = Date().time
+            println(end - start)
+            println("NO")
+        }
+    }
 }
