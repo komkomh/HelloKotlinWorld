@@ -1,6 +1,28 @@
 package docbase
 
 /*
+20
+彩りガーデンサラダ 299 130
+小エビのサラダ 349 115
+やわらかチキンのサラダ 299 134
+わかめサラダ 299 92
+イタリアンサラダ 299 196
+シーフードサラダ 599 229
+半熟卵とポークのサラダ 599 433
+コーンクリームスープ 149 142
+冷たいパンプキンスープ(季節限定) 149 105
+たっぷり野菜のミネストローネ(季節限定) 299 222
+削りたてペコリーノチーズ 100 59
+ミニフィセル 169 188
+ガーリックトースト 189 252
+セットドリンクバー 190 0
+辛味チキン 299 374
+アスパラガスのオーブン焼き(季節限定) 299 221
+ポップコーンシュリンプ 299 215
+エスカルゴのオーブン焼き 399 256
+ムール貝のガーリック焼き 399 164
+野菜ソースのグリルソーセージ 399 570
+
 114
 彩りガーデンサラダ 299 130
 小エビのサラダ 349 115
@@ -124,12 +146,79 @@ fun main() {
     val menus: List<Menu> =
         (0 until n).map { readLine()!!.split(" ") }.map { Menu(it[0], it[1].toInt(), it[2].toInt()) }
 
-    menus.forEach { println(it) }
+//    menus.forEach { println(it) }
 
-    fun xx() {
+//    var memo: MutableMap<Int, Array<out Menu>> = mutableMapOf()
+//    fun getMaxCalMenus(vararg currentMenus: Menu): Array<out Menu> {
+//
+//        val price: Int = currentMenus.sumBy { currentMenu -> currentMenu.price }
+////
+////        if (!memo.contains(price)) {
+////            val results = menus.filter { (it.price + price) <= 1000 }
+////                .mapNotNull { getMaxCalMenus(*currentMenus, it) }
+////                .maxBy { it.sumBy { menu -> menu.cal } }
+////                ?: run { currentMenus }
+////            memo.put(price, results)
+////        }
+////        return memo.get(price)!!
+//
+//        return menus.filter { (it.price + price) <= 1000 }
+//            .mapNotNull { getMaxCalMenus(*currentMenus, it) }
+//            .maxBy { it.sumBy { menu -> menu.cal } }
+//            ?: run { currentMenus }
+//
+////        val price: Int = currentMenus.sumBy { currentMenu -> currentMenu.price }
+////        return memo.getOrPut(price, {
+////            menus.filter { (it.price + price) <= 1000 }
+////                .mapNotNull { getMaxCalMenus(*currentMenus, it) }
+////                .maxBy { it.sumBy { menu -> menu.cal } }
+////                ?: run { currentMenus }
+////        })
+//    }
 
+    var memo: MutableMap<Int, Array<out Menu>> = mutableMapOf()
+    fun getMaxCalMenus(remaining: Int): List<Menu> {
+
+        menus.filter { it.price <= remaining }
+                .mapNotNull { getMaxCalMenus(*currentMenus, it) }
+                .maxBy { it.sumBy { menu -> menu.cal } }
+                ?: run { currentMenus }
+
+        val price: Int = currentMenus.sumBy { currentMenu -> currentMenu.price }
+//
+//        if (!memo.contains(price)) {
+//            val results = menus.filter { (it.price + price) <= 1000 }
+//                .mapNotNull { getMaxCalMenus(*currentMenus, it) }
+//                .maxBy { it.sumBy { menu -> menu.cal } }
+//                ?: run { currentMenus }
+//            memo.put(price, results)
+//        }
+//        return memo.get(price)!!
+
+        return menus.filter { (it.price + price) <= 1000 }
+            .mapNotNull { getMaxCalMenus(*currentMenus, it) }
+            .maxBy { it.sumBy { menu -> menu.cal } }
+            ?: run { currentMenus }
+
+//        val price: Int = currentMenus.sumBy { currentMenu -> currentMenu.price }
+//        return memo.getOrPut(price, {
+//            menus.filter { (it.price + price) <= 1000 }
+//                .mapNotNull { getMaxCalMenus(*currentMenus, it) }
+//                .maxBy { it.sumBy { menu -> menu.cal } }
+//                ?: run { currentMenus }
+//        })
     }
+
+    val results = getMaxCalMenus()
+    println("===================")
+    results.forEach { print(it) }
+    println()
+    println("price = ${results.sumBy { it.price }}")
+    println("cal = ${results.sumBy { it.cal }}")
+
+//    val GetMaxCalMenus: MemoizedFunctionToNotNull<Array<out Menu>, Array<out Menu>> = currentMenus -> {
+//
+//    }
 }
 
-data class Menu(val name: String, val price: Int, val cal: Int) {
-}
+data class Menu(val name: String, val price: Int, val cal: Int) {}
