@@ -32,7 +32,7 @@ fun main() {
 }
 
 private fun readCsvLines(): List<String> {
-    val filePath = "/Users/curp043/Documents/work/release2019.09/IFM最新マスタ一式20190906/勘定科目情報.csv"
+    val filePath = "${INPUT_DIR}/勘定科目情報.csv"
     val lines = File(filePath).readLines(charset("windows-31j"));
     return lines.filterNot { it.startsWith("勘定科目") }
         .filterNot { it.startsWith("MJRGRP_ACCTS") }
@@ -71,85 +71,55 @@ fun loadBusinessDetails(csvLines: List<String>, accounts: Set<AccountDto>): Set<
     }.toSet()
 
 fun writeLargeAccounts(largeAccounts: Set<LargeAccountDto>) {
-    val fileName =
-        "/Users/curp043/Documents/work/release2019.09/IFM最新マスタ一式20190906/master_csv20190919/accounts_large_classifications.csv"
-    OutputStreamWriter(FileOutputStream(fileName), charset("windows-31j")).use {
+    val fileName = "$OUTPUT_DIR/accounts_large_classifications.csv"
+    OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         largeAccounts.forEachIndexed { index, dto ->
             it.write("${index + 1}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000\n")
         }
     }
-//    val pw = PrintWriter(BufferedWriter(FileWriter(fileName)))
-//    largeAccounts.forEachIndexed { index, dto ->
-//        pw.println("${index + 1}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000")
-//    }
-//    pw.close()
 }
 
 fun writeMediumAccounts(mediumAccounts: Set<MediumAccountDto>) {
-    val fileName =
-        "/Users/curp043/Documents/work/release2019.09/IFM最新マスタ一式20190906/master_csv20190919/accounts_medium_classifications.csv"
-    OutputStreamWriter(FileOutputStream(fileName), charset("windows-31j")).use {
+    val fileName = "$OUTPUT_DIR/accounts_medium_classifications.csv"
+    OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         mediumAccounts.forEachIndexed { index, dto ->
             it.write("${index + 1}\t${dto.largeId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000\n")
         }
     }
-//    val pw = PrintWriter(BufferedWriter(FileWriter(fileName)))
-//    mediumAccounts.forEachIndexed { index, dto ->
-//        pw.println("${index + 1}\t${dto.largeId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000")
-//    }
-//    pw.close()
 }
 
 fun writeSmallAccounts(smallAccounts: Set<SmallAccountDto>) {
-    val fileName =
-        "/Users/curp043/Documents/work/release2019.09/IFM最新マスタ一式20190906/master_csv20190919/accounts_small_classifications.csv"
-    OutputStreamWriter(FileOutputStream(fileName), charset("windows-31j")).use {
+    val fileName = "$OUTPUT_DIR/accounts_small_classifications.csv"
+    OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         smallAccounts.forEachIndexed { index, dto ->
             it.write("${index + 1}\t${dto.mediumId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000\n")
         }
     }
-//    val pw = PrintWriter(BufferedWriter(FileWriter(fileName)))
-//    smallAccounts.forEachIndexed { index, dto ->
-//        pw.println("${index + 1}\t${dto.mediumId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000")
-//    }
-//    pw.close()
 }
 
 fun writeAccounts(accounts: Set<AccountDto>) {
-    val fileName = "/Users/curp043/Documents/work/release2019.09/IFM最新マスタ一式20190906/master_csv20190919/accounts.csv"
-    OutputStreamWriter(FileOutputStream(fileName), charset("windows-31j")).use {
+    val fileName = "$OUTPUT_DIR/accounts.csv"
+    OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         accounts.forEachIndexed { index, dto ->
             it.write("${index + 1}\t${dto.smallId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000\n")
         }
     }
-//    val pw = PrintWriter(BufferedWriter(FileWriter(fileName)))
-//    accounts.forEachIndexed { index, dto ->
-//        pw.println("${index + 1}\t${dto.smallId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000")
-//    }
-//    pw.close()
 }
 
 fun writeBusinessDetails(businessDetails: Set<BusinessDetailDto>) {
-    val fileName =
-        "/Users/curp043/Documents/work/release2019.09/IFM最新マスタ一式20190906/master_csv20190919/business_details.csv"
-    OutputStreamWriter(FileOutputStream(fileName), charset("windows-31j")).use {
+    val fileName = "$OUTPUT_DIR/business_details.csv"
+    OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         businessDetails.forEachIndexed { index, dto ->
             it.write("${index + 1}\t${dto.accountId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000\n")
         }
     }
-//    val fil = FileWriter(fileName)
-//    val pw = PrintWriter(BufferedWriter(fil))
-//    businessDetails.forEachIndexed { index, dto ->
-//        pw.println("${index + 1}\t${dto.accountId}\t${dto.code}\t${dto.name}\t0\t2019-03-01 10:00:00.000\t2019-03-01 10:00:00.000")
-//    }
-//    pw.close()
 }
 
 data class LargeAccountDto(val code: String, val name: String) {
     companion object {
         fun create(csvLine: String): LargeAccountDto {
             val array = csvLine.split(",")[0].split(" ")
-            return LargeAccountDto(array[0], array[1])
+            return LargeAccountDto(array[0], mask(array[1]))
         }
     }
 }
@@ -158,7 +128,7 @@ data class MediumAccountDto(val largeId: Int, val code: String, val name: String
     companion object {
         fun create(largeId: Int, csvLine: String): MediumAccountDto {
             val array = csvLine.split(",")[1].split(" ")
-            return MediumAccountDto(largeId, array[0], array[1])
+            return MediumAccountDto(largeId, array[0], mask(array[1]))
         }
     }
 }
@@ -167,7 +137,7 @@ data class SmallAccountDto(val mediumId: Int, val code: String, val name: String
     companion object {
         fun create(mediumId: Int, csvLine: String): SmallAccountDto {
             val array = csvLine.split(",")[2].split(" ")
-            return SmallAccountDto(mediumId, array[0], array[1])
+            return SmallAccountDto(mediumId, array[0], mask(array[1]))
         }
     }
 }
@@ -176,7 +146,7 @@ data class AccountDto(val smallId: Int, val code: String, val name: String) {
     companion object {
         fun create(smallId: Int, csvLine: String): AccountDto {
             val array = csvLine.split(",")[3].split(" ")
-            return AccountDto(smallId, array[0], array[1])
+            return AccountDto(smallId, array[0], mask(array[1]))
         }
     }
 }
@@ -185,7 +155,7 @@ data class BusinessDetailDto(val accountId: Int, val code: String, val name: Str
     companion object {
         fun create(accountId: Int, csvLine: String): BusinessDetailDto {
             val array = csvLine.split(",")[5].split(" ")
-            return BusinessDetailDto(accountId, array[0], array[1])
+            return BusinessDetailDto(accountId, array[0], mask(array[1]))
         }
     }
 }
