@@ -1,7 +1,10 @@
 package ifm
 
-import java.io.*
-import java.nio.charset.Charset
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 fun main() {
@@ -22,6 +25,12 @@ private fun readCsvLines(): List<String> {
     val lines = File(filePath).readLines(charset("windows-31j"))
     return lines.filterNot { it.startsWith("活動") }
         .filterNot { it.startsWith("ACTY_") }
+        .filter {
+            val now = LocalDate.now()
+            val date = LocalDate.parse(it.split(",")[7], DateTimeFormatter.ofPattern("yyyy/MM/dd"))
+            println("now = ${now} || date = ${date}")
+            now.isBefore(date)
+        }
         .map { HankakuToZenkaku.hankakuKatakanaToZenkakuKatakana(it) }
         .map { it.replace("  ", " ") }
 }
