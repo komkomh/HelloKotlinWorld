@@ -40,8 +40,9 @@ public class HankakuToZenkaku {
      */
     public static char mergeChar(char c1, char c2) {
         if (c2 == 'ﾞ') {
-            if ("ｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾊﾋﾌﾍﾎ".indexOf(c1) > 0) {
+            if ("ｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾊﾋﾌﾍﾎ".indexOf(c1) > -1) {
                 switch (c1) {
+                    case 'ｳ': return 'ヴ';
                     case 'ｶ': return 'ガ';
                     case 'ｷ': return 'ギ';
                     case 'ｸ': return 'グ';
@@ -65,7 +66,7 @@ public class HankakuToZenkaku {
                 }
             }
         } else if (c2 == 'ﾟ') {
-            if ("ﾊﾋﾌﾍﾎ".indexOf(c1) > 0) {
+            if ("ﾊﾋﾌﾍﾎ".indexOf(c1) > -1) {
                 switch (c1) {
                     case 'ﾊ': return 'パ';
                     case 'ﾋ': return 'ピ';

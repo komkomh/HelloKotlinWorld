@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter
 const val INPUT_DIR = "/Users/curp043/Documents/work/release2019.09/マスタ/input"
 const val OUTPUT_DIR = "/Users/curp043/Documents/work/release2019.09/マスタ/output"
 const val MASKING = false
-const val OUTPUT_ENCODING = "UTF8"//"windows-31j"
+const val OUTPUT_ENCODING = "windows-31j"
 
 fun main() {
     val csvLines = readCsvLines()
