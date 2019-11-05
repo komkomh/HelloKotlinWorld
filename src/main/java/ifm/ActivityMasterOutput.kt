@@ -6,10 +6,10 @@ import java.io.OutputStreamWriter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-const val INPUT_DIR = "/Users/curp043/Documents/work/release2019.09/マスタ/input"
-const val OUTPUT_DIR = "/Users/curp043/Documents/work/release2019.09/マスタ/output"
-const val MASKING = false
-const val OUTPUT_ENCODING = "windows-31j"
+private const val INPUT_DIR = "/Users/curp043/Documents/work/release2019.09/マスタ/input"
+private const val OUTPUT_DIR = "/Users/curp043/Documents/work/release2019.09/マスタ/output"
+private const val MASKING = false
+private const val OUTPUT_ENCODING = "windows-31j"
 
 fun main() {
     val csvLines = readCsvLines()
@@ -36,19 +36,19 @@ private fun readCsvLines(): List<String> {
         .map { it.replace("  ", " ") }
 }
 
-fun loadLargeActivities(csvLines: List<String>): Set<LargeActivityDto> =
+private fun loadLargeActivities(csvLines: List<String>): Set<LargeActivityDto> =
     csvLines.map { LargeActivityDto.create(it) }.toSet()
 
-fun loadMediumActivities(csvLines: List<String>, largeActivities: Set<LargeActivityDto>): Set<MediumActivityDto> =
+private fun loadMediumActivities(csvLines: List<String>, largeActivities: Set<LargeActivityDto>): Set<MediumActivityDto> =
     csvLines.map { MediumActivityDto.create(it, largeActivities) }.toSet()
 
-fun loadSmallActivities(csvLines: List<String>, mediumActivities: Set<MediumActivityDto>): Set<SmallActivityDto> =
+private fun loadSmallActivities(csvLines: List<String>, mediumActivities: Set<MediumActivityDto>): Set<SmallActivityDto> =
     csvLines.map { SmallActivityDto.create(it, mediumActivities) }.toSet()
 
-fun loadActivities(csvLines: List<String>, smallActivities: Set<SmallActivityDto>): Set<ActivityDto> =
+private fun loadActivities(csvLines: List<String>, smallActivities: Set<SmallActivityDto>): Set<ActivityDto> =
     csvLines.map { ActivityDto.create(it, smallActivities) }.toSet()
 
-fun writeLargeActivities(largeActivities: Set<LargeActivityDto>) {
+private fun writeLargeActivities(largeActivities: Set<LargeActivityDto>) {
     val fileName = "$OUTPUT_DIR/activities_large_classifications.csv"
     OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         largeActivities.forEachIndexed { index, dto ->
@@ -57,7 +57,7 @@ fun writeLargeActivities(largeActivities: Set<LargeActivityDto>) {
     }
 }
 
-fun writeMediumActivities(mediumActivities: Set<MediumActivityDto>) {
+private fun writeMediumActivities(mediumActivities: Set<MediumActivityDto>) {
     val fileName = "$OUTPUT_DIR/activities_medium_classifications.csv"
     OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         mediumActivities.forEachIndexed { index, dto ->
@@ -66,7 +66,7 @@ fun writeMediumActivities(mediumActivities: Set<MediumActivityDto>) {
     }
 }
 
-fun writeSmallActivities(smallActivities: Set<SmallActivityDto>) {
+private fun writeSmallActivities(smallActivities: Set<SmallActivityDto>) {
     val fileName = "$OUTPUT_DIR/activities_small_classifications.csv"
     OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         smallActivities.forEachIndexed { index, dto ->
@@ -75,7 +75,7 @@ fun writeSmallActivities(smallActivities: Set<SmallActivityDto>) {
     }
 }
 
-fun writeActivities(activities: Set<ActivityDto>) {
+private fun writeActivities(activities: Set<ActivityDto>) {
     val fileName = "$OUTPUT_DIR/activities.csv"
     OutputStreamWriter(FileOutputStream(fileName), charset(OUTPUT_ENCODING)).use {
         activities.forEachIndexed { index, activityDto ->
@@ -84,14 +84,14 @@ fun writeActivities(activities: Set<ActivityDto>) {
     }
 }
 
-fun mask(original: String): String = original.mapIndexed { index, c ->
-    when (MASKING && index >= 3) {
-        true -> '*'
-        false -> c
-    }
+private fun mask(original: String): String = original.mapIndexed { index, c ->
+  when (MASKING && index >= 3) {
+    true -> '*'
+    false -> c
+  }
 }.joinToString("")
 
-data class LargeActivityDto(val code: String, val name: String) {
+private data class LargeActivityDto(val code: String, val name: String) {
     companion object {
         fun create(csvLine: String): LargeActivityDto {
             val csv = csvLine.split(",")
@@ -100,7 +100,7 @@ data class LargeActivityDto(val code: String, val name: String) {
     }
 }
 
-data class MediumActivityDto(val largeId: Int, val code: String, val name: String) {
+private data class MediumActivityDto(val largeId: Int, val code: String, val name: String) {
     companion object {
         fun create(csvLine: String, largeActivities: Set<LargeActivityDto>): MediumActivityDto {
             val csv = csvLine.split(",")
@@ -112,7 +112,7 @@ data class MediumActivityDto(val largeId: Int, val code: String, val name: Strin
     }
 }
 
-data class SmallActivityDto(val mediumId: Int, val code: String, val name: String) {
+private data class SmallActivityDto(val mediumId: Int, val code: String, val name: String) {
     companion object {
         fun create(csvLine: String, mediumActivities: Set<MediumActivityDto>): SmallActivityDto {
             val csv = csvLine.split(",")
@@ -123,7 +123,7 @@ data class SmallActivityDto(val mediumId: Int, val code: String, val name: Strin
     }
 }
 
-data class ActivityDto(val smallId: Int, val code: String, val name: String) {
+private data class ActivityDto(val smallId: Int, val code: String, val name: String) {
     companion object {
         fun create(csvLine: String, smallActivities: Set<SmallActivityDto>): ActivityDto {
             val csv = csvLine.split(",")
